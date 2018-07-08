@@ -10,6 +10,7 @@ namespace BadPredictiveText
         static void Main(string[] args)
         {
             Boolean moreInput = true;
+            Boolean moreOutput = true;
             String filename;
             Dictionary<String, Word> dict = new Dictionary<string, Word>();
 
@@ -39,11 +40,11 @@ namespace BadPredictiveText
                 }
                 //Console.WriteLine(lines);
                 string[] words = lines.Split(' ', ',', '.', '\n', '(', ')', '!', ';', '?', ':', '-', '"');
-                
+
                 Word prevword = null;
                 foreach (string word in words)
                 {
-                    if (word == "" || word == " " || word == "\n" || String.IsNullOrWhiteSpace(word))
+                    if (String.IsNullOrWhiteSpace(word))
                     {
                         continue;
                     }
@@ -68,20 +69,52 @@ namespace BadPredictiveText
 
             }
 
-            Console.WriteLine("Generating output...");
-
-            String w = "we";
-            Word wor;
-            StreamWriter sw = new StreamWriter("song.txt");
-            while(w!="END")
+            while (moreOutput)
             {
-                sw.Write(w + " ");
-                dict.TryGetValue(w, out wor);
-                w = wor.getNextWord();
-                Thread.Sleep(15);
+                Console.WriteLine("Generating output...");
+
+                String w = "we";
+                Word wor;
+                String output = "";
+                try
+                {
+                    StreamWriter sw = new StreamWriter("Output.txt");
+                    int wordcount = 0;
+                    while (w != "END")
+                    {
+                        //sw.Write(w + " ");
+                        output += w + " ";
+                        dict.TryGetValue(w, out wor);
+                        w = wor.getNextWord();
+                        wordcount++;
+                    }
+                    sw.Write(output);
+                    sw.Flush();
+                    Console.WriteLine("Output processing finished.");
+                    //Console.WriteLine(output);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to output.");
+                }
+
+                while (true)
+                {
+                    Console.Write("Generate another output? (Y/N): ");
+                    String answer = Console.ReadLine();
+                    if (answer.ToLower()[0] == 'y')
+                    {
+                        moreOutput = true;
+                        break;
+                    }
+                    else if (answer.ToLower()[0] == 'n')
+                    {
+                        moreOutput = false;
+                        break;
+                    }
+                }
             }
-            sw.Flush();
-            Console.WriteLine("Output processing finished.");
+
             #if DEBUG
             Console.WriteLine("Press enter to close...");
             Console.ReadLine();
