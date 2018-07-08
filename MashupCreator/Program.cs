@@ -74,6 +74,10 @@ namespace BadPredictiveText
                 Console.WriteLine("Generating output...");
 
                 String w = "we";
+                Random rand = new Random();
+                List<String> values = System.Linq.Enumerable.ToList(dict.Keys);
+                w = values[rand.Next(dict.Count)];
+
                 Word wor;
                 String output = "";
                 try
@@ -90,6 +94,7 @@ namespace BadPredictiveText
                     }
                     sw.Write(output);
                     sw.Flush();
+                    sw.Close();
                     Console.WriteLine("Output processing finished.");
                     //Console.WriteLine(output);
                 }
